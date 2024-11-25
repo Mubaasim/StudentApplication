@@ -16,60 +16,64 @@ import org.springframework.web.bind.annotation.RestController;
 import com.sra.studentapp.model.Student;
 import com.sra.studentapp.service.StudentService;
 
-import jakarta.servlet.http.HttpSession;
-
-
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 @RestController
 public class StudentController {
 
 	@Autowired
 	private StudentService studentService;
-	
-	@PostMapping("/register")//both update and register
-	public String registerStudent(@RequestBody Student s) {
-		Student student = studentService.registerStudent(s);
-		return student == null ? "Username already exists" : "Success";
-	}
-	
-	@PostMapping("/login")
-    public ResponseEntity<?> loginStudent(@RequestBody Student loginData, HttpSession session) {
-        Optional<Student> student = studentService.loginStudent(loginData.getUserName(), loginData.getPassword());
-        if (student.isPresent()) {
-        	System.out.println("Login Successful");
-            session.setAttribute("current", student.get());
-            System.out.println(session.getAttribute("current").toString());
-            return ResponseEntity.ok(student);
-        } else {
-        	System.out.println("Login failed");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("Invalid username or password");
-        }
-    }
-	
-	@GetMapping("/userdetails")
-	public ResponseEntity<?> getUserDetails(HttpSession session) {
-	    Student student = (Student) session.getAttribute("current");
-	    if (student == null) {
-	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-	                .body("login to view details");
-	    }
-	    return ResponseEntity.ok(student);
-	}
-	
-	@PostMapping("/logout")
-	public ResponseEntity<?> logout(HttpSession session) {
-	    session.invalidate();
-	    return ResponseEntity.ok("Logged out successfully");
-	}
-	
 
-	@GetMapping("/students")//just testing
+	@PostMapping("/student") // both update and register
+	public ResponseEntity<?> registerorUpdateStudent(@RequestBody Student s) {
+		Student student;
+		if(s.getId() == null) {
+			student = studentService.registerStudent(s,true);
+
+			if (student == null) {
+				return ResponseEntity.status(HttpStatus.CONFLICT).body("UserName already exists.");
+			}
+			
+			return ResponseEntity.ok(student);
+		}
+		
+		student = studentService.registerStudent(s, false);
+		
+		return ResponseEntity.ok(student);
+
+	}
+
+	@PostMapping("/login")
+	public ResponseEntity<?> loginStudent(@RequestBody Student loginData) {
+		Optional<Student> student = studentService.loginStudent(loginData.getUserName(), loginData.getPassword());
+		if (student.isPresent()) {
+			System.out.println("Login Successful");
+			return ResponseEntity.ok(student);
+		} else {
+			System.out.println("Login failed");
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+		}
+	}
+
+	@GetMapping("/userdetails/{userName}")
+	public ResponseEntity<?> getUserDetails(@PathVariable String userName) {
+		Optional<Student> student = studentService.getStudent(userName);
+		if (student == null) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("login to view details");
+		}
+		return ResponseEntity.ok(student);
+	}
+
+	@PostMapping("/logout")
+	public ResponseEntity<?> logout() {
+		return ResponseEntity.ok("Logged out successfully");
+	}
+
+	@GetMapping("/students") // just testing
 	public List<Student> getStudents() {
 		return studentService.getStudents();
 	}
-	
-	@GetMapping("/student/{userName}")//maybe to obtain others
+
+	@GetMapping("/student/{userName}") // maybe to obtain others
 	public Optional<Student> getStudent(@PathVariable String userName) {
 		return studentService.getStudent(userName);
 	}

@@ -20,13 +20,20 @@ public class StudentServiceImpl implements StudentService {
 	private PasswordEncoder passwordEncoder;
 	
 	@Override
-	public Student registerStudent(Student s) {
-		s.setPassword(passwordEncoder.encode(s.getPassword()));
+	public Student registerStudent(Student s, boolean register) {
+		if(register) {
+			s.setPassword(passwordEncoder.encode(s.getPassword()));
+			if (studentRepository.existsByUserName(s.getUserName()) && register) {
+		        System.out.println("UserName already exists");
+		        return null;
+		    }
+		}
+		else {
+			Student studentFromDb = studentRepository.findById(s.getId()).orElse(null);
+			s.setPassword(studentFromDb.getPassword());
+		}
 		// TODO Auto-generated method stub
-		if (studentRepository.existsByUserName(s.getUserName())) {
-	        System.out.println("UserName already exists");
-	        return null;  // or throw a custom exception
-	    }
+		
 		
 		return studentRepository.save(s);
 		
@@ -46,6 +53,11 @@ public class StudentServiceImpl implements StudentService {
 		return student;
 	}
 	
+	@Override
+	public Optional<Student> getStudent(String userName) {
+		// TODO Auto-generated method stub
+		return studentRepository.findByUserName(userName);
+	}
 	
 	
 	
@@ -57,9 +69,6 @@ public class StudentServiceImpl implements StudentService {
 
 	
 
-	@Override
-	public Optional<Student> getStudent(String userName) {
-		// TODO Auto-generated method stub
-		return studentRepository.findById(userName);
-	}
+	
+
 }

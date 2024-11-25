@@ -10,6 +10,6 @@ public interface StudentService {
 	public List<Student> getStudents();
 	public Optional<Student> getStudent(String userName);
 
-	public Student registerStudent(Student s);
+	public Student registerStudent(Student s, boolean register);
 	public Optional<Student> loginStudent(String userName, String password);
 }
