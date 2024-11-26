@@ -1,15 +1,13 @@
 package com.sra.studentapp.service;
 
-import java.util.List;
-import java.util.Optional;
-
 import com.sra.studentapp.model.Student;
+import com.sra.studentapp.model.StudentDtoForUpdate;
 
 
 public interface StudentService {
-	public List<Student> getStudents();
-	public Optional<Student> getStudent(String userName);
+	public StudentDtoForUpdate getStudent(String userName);
 
-	public Student registerStudent(Student s, boolean register);
-	public Optional<Student> loginStudent(String userName, String password);
+	public Student registerStudent(Student s);
+	public StudentDtoForUpdate updateStudent(StudentDtoForUpdate s);
+	public String loginStudent(String userName, String password);
 }
