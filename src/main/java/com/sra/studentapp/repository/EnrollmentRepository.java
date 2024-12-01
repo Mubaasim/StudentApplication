@@ -11,4 +11,5 @@ import com.sra.studentapp.model.Enrollment;
 public interface EnrollmentRepository extends MongoRepository<Enrollment, String>{
 	public boolean existsByCourseIdAndStudentId(String courseId, String studentId);
 	public List<Enrollment> findByStudentId(String studentId);
+	public void deleteByCourseIdAndStudentId(String courseId, String studentId);
 }

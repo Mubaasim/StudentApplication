@@ -35,8 +35,14 @@ public class StudentController {
 		return studentService.loginStudent(loginData.getUserName(), loginData.getPassword());
 	}
 
-	@GetMapping("/userdetails/{userName}")
-	public StudentDtoForUpdate getUserDetails(@PathVariable String userName) {
-		return studentService.getStudent(userName);
+	@GetMapping("/userdetails/{id}")
+	public StudentDtoForUpdate getUserDetails(@PathVariable String id) {
+		return studentService.getStudent(id);
+	}
+	
+	@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+	@GetMapping("/getusername/{id}")
+	public String getUserName(@PathVariable String id) {
+		return studentService.getUserName(id);
 	}
 }

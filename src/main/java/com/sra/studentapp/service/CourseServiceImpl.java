@@ -1,5 +1,7 @@
 package com.sra.studentapp.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +26,12 @@ public class CourseServiceImpl implements CourseService{
 		// TODO Auto-generated method stub
 		courseRepository.deleteById(id);
 		return "Success";
+	}
+
+	@Override
+	public List<Course> getAllCourses() {
+		// TODO Auto-generated method stub
+		return courseRepository.findAll();
 	}
 	
 	

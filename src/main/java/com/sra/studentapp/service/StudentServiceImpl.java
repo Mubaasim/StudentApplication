@@ -49,21 +49,28 @@ public class StudentServiceImpl implements StudentService {
 		if(student.isPresent()) {
 			boolean match = passwordEncoder.matches(password, student.get().getPassword());
 			if(match) {
-				return userName;
+				return student.get().getId();
 			}
 		}
 		return null;
 	}
 	
 	@Override
-	public StudentDtoForUpdate getStudent(String userName) {
+	public StudentDtoForUpdate getStudent(String id) {
 		// TODO Auto-generated method stub
-		Optional<Student> student =  studentRepository.findByUserName(userName);
+		Optional<Student> student =  studentRepository.findById(id);
 		StudentDtoForUpdate updatedDetails = new StudentDtoForUpdate();
+		updatedDetails.setUserName(student.get().getUserName());
 		updatedDetails.setEmail(student.get().getEmail());
 		updatedDetails.setName(student.get().getName());
 		updatedDetails.setId(student.get().getId());
 		updatedDetails.setPhone(student.get().getPhone());
 		return updatedDetails;
+	}
+
+	@Override
+	public String getUserName(String id) {
+		// TODO Auto-generated method stub
+		return studentRepository.findById(id).get().getUserName();
 	}
 }

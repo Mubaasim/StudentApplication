@@ -7,6 +7,6 @@ import com.sra.studentapp.model.Enrollment;
 
 public interface EnrollmentService {
 	public String enroll(Enrollment enrollment);
-	public String drop(String id);
+	public String drop(Enrollment enrollment);
 	public List<Course> getCourseList(String studentId);
 }

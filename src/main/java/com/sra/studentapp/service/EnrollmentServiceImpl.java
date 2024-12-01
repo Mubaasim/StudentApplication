@@ -32,10 +32,10 @@ public class EnrollmentServiceImpl implements EnrollmentService{
 	}
 
 	@Override
-	public String drop(String id) {
+	public String drop(Enrollment e) {
 		// TODO Auto-generated method stub
-		enrollmentRepository.deleteById(id);
-		return null;
+		enrollmentRepository.deleteByCourseIdAndStudentId(e.getCourseId(), e.getStudentId());
+		return "Success";
 	}
 
 	@Override
