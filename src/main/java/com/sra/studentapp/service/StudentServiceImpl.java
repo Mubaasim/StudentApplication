@@ -15,22 +15,22 @@ public class StudentServiceImpl implements StudentService {
 
 	@Autowired
 	private StudentRepository studentRepository;
-	
+
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-	
+
 	@Override
 	public Student registerStudent(Student s) {
-		if(studentRepository.existsByUserName(s.getUserName())) {
+		if (studentRepository.existsByUserName(s.getUserName())) {
 			return null;
 		}
 		s.setPassword(passwordEncoder.encode(s.getPassword()));
 		Student student = studentRepository.save(s);
 		student.setPassword("");
 		return student;
-		
+
 	}
-	
+
 	@Override
 	public StudentDtoForUpdate updateStudent(StudentDtoForUpdate s) {
 		Optional<Student> student = studentRepository.findById(s.getId());
@@ -40,37 +40,46 @@ public class StudentServiceImpl implements StudentService {
 		studentRepository.save(student.get());
 		return s;
 	}
-	
+
 	@Override
 	public String loginStudent(String userName, String password) {
 		// TODO Auto-generated method stub
 		Optional<Student> student = studentRepository.findByUserName(userName);
-		
-		if(student.isPresent()) {
+
+		if (student.isPresent()) {
 			boolean match = passwordEncoder.matches(password, student.get().getPassword());
-			if(match) {
+			if (match) {
 				return student.get().getId();
 			}
 		}
 		return null;
 	}
-	
+
 	@Override
 	public StudentDtoForUpdate getStudent(String id) {
 		// TODO Auto-generated method stub
-		Optional<Student> student =  studentRepository.findById(id);
-		StudentDtoForUpdate updatedDetails = new StudentDtoForUpdate();
-		updatedDetails.setUserName(student.get().getUserName());
-		updatedDetails.setEmail(student.get().getEmail());
-		updatedDetails.setName(student.get().getName());
-		updatedDetails.setId(student.get().getId());
-		updatedDetails.setPhone(student.get().getPhone());
-		return updatedDetails;
+		try {
+			Optional<Student> student =  studentRepository.findById(id);
+			StudentDtoForUpdate updatedDetails = new StudentDtoForUpdate();
+			updatedDetails.setUserName(student.get().getUserName());
+			updatedDetails.setEmail(student.get().getEmail());
+			updatedDetails.setName(student.get().getName());
+			updatedDetails.setId(student.get().getId());
+			updatedDetails.setPhone(student.get().getPhone());
+			return updatedDetails;
+		} catch (Exception e) {
+			return null;
+		}
+		
 	}
 
 	@Override
 	public String getUserName(String id) {
 		// TODO Auto-generated method stub
-		return studentRepository.findById(id).get().getUserName();
+		try {
+			return studentRepository.findById(id).get().getUserName();
+		} catch (Exception e) {
+			return null;
+		}
 	}
 }

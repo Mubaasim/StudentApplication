@@ -7,5 +7,6 @@ import com.sra.studentapp.model.Course;
 
 @Repository
 public interface CourseRepository extends MongoRepository<Course, String>{
-
+	public boolean existsByCourseId(String courseId);
+	public void deleteByCourseId(String courseId);
 }

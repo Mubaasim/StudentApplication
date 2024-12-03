@@ -17,6 +17,9 @@ public class CourseServiceImpl implements CourseService{
 	@Override
 	public String addCourse(Course c) {
 		// TODO Auto-generated method stub
+		if(courseRepository.existsByCourseId(c.getCourseId())) {
+			return "Duplicate";
+		}
 		courseRepository.save(c);
 		return "Success";
 	}
@@ -24,7 +27,10 @@ public class CourseServiceImpl implements CourseService{
 	@Override
 	public String deleteCourse(String id) {
 		// TODO Auto-generated method stub
-		courseRepository.deleteById(id);
+		if(!courseRepository.existsByCourseId(id)) {
+			return null;
+		}
+		courseRepository.deleteByCourseId(id);
 		return "Success";
 	}
 
