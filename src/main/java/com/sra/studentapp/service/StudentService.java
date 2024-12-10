@@ -1,15 +1,16 @@
 package com.sra.studentapp.service;
 
+import org.springframework.http.ResponseEntity;
+
 import com.sra.studentapp.model.Student;
 import com.sra.studentapp.model.StudentDtoForUpdate;
 
 
 public interface StudentService {
-	public StudentDtoForUpdate getStudent(String id);
-
-	public Student registerStudent(Student s);
-	public StudentDtoForUpdate updateStudent(StudentDtoForUpdate s);
-	public String loginStudent(String userName, String password);
+	public ResponseEntity<String> registerStudent(Student s);
+	public ResponseEntity<String> updateStudent(StudentDtoForUpdate s);
+	public ResponseEntity<String> loginStudent(String userName, String password);
 	
-	public String getUserName(String id);
+	public ResponseEntity<StudentDtoForUpdate> getStudent(String id);
+	public ResponseEntity<String> getUserName(String id);
 }

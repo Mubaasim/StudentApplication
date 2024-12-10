@@ -3,6 +3,7 @@ package com.sra.studentapp.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,17 +23,17 @@ public class EnrollmentController {
 	EnrollmentService enrollmentService;
 	
 	@PostMapping("/enroll")
-	public String enroll(@RequestBody Enrollment enrollment) {
+	public ResponseEntity<String> enroll(@RequestBody Enrollment enrollment) {
 		return enrollmentService.enroll(enrollment);
 	}
 	
 	@PostMapping("/drop")
-	public String drop(@RequestBody Enrollment enrollment) {
+	public ResponseEntity<String> drop(@RequestBody Enrollment enrollment) {
 		return enrollmentService.drop(enrollment);
 	}
 	
 	@GetMapping("/enrolled/{studentId}")
-	public List<Course> getCourseList(@PathVariable String studentId) {
+	public ResponseEntity<List<Course>> getCourseList(@PathVariable String studentId) {
 		return enrollmentService.getCourseList(studentId);
 	}
 }

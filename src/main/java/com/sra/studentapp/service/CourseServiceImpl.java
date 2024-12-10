@@ -3,6 +3,7 @@ package com.sra.studentapp.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.sra.studentapp.model.Course;
@@ -15,31 +16,50 @@ public class CourseServiceImpl implements CourseService{
 	CourseRepository courseRepository;
 	
 	@Override
-	public String addCourse(Course c) {
+	public ResponseEntity<String> addCourse(Course c) {
 		// TODO Auto-generated method stub
-		if(courseRepository.existsByCourseId(c.getCourseId())) {
-			return "Duplicate";
+		try {
+			if(courseRepository.existsByCourseId(c.getCourseId())) {
+				return ResponseEntity.status(409).body("Course with this ID already exists"); //conflict
+			} else {
+				courseRepository.save(c);
+				return ResponseEntity.status(201).body("Course added successfully"); //created
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.err.println("Error adding course: " + e.getMessage());
+			
+			return ResponseEntity.status(500).body("An error occurred while adding the course"); //internal server error
 		}
-		courseRepository.save(c);
-		return "Success";
 	}
 
 	@Override
-	public String deleteCourse(String id) {
+	public ResponseEntity<String> deleteCourse(String id) {
 		// TODO Auto-generated method stub
-		if(!courseRepository.existsByCourseId(id)) {
-			return null;
+		try {
+			if(!courseRepository.existsByCourseId(id)) {
+				return ResponseEntity.status(404).body("Course with this ID does not exist"); //not found
+			}
+			courseRepository.deleteByCourseId(id);
+			return ResponseEntity.ok("Course deleted successfully");
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.err.println("Error deleting course: " + e.getMessage());
+			
+			return ResponseEntity.status(500).body("An error occurred while deleting the course"); //internal server error
 		}
-		courseRepository.deleteByCourseId(id);
-		return "Success";
 	}
 
 	@Override
-	public List<Course> getAllCourses() {
+	public ResponseEntity<List<Course>> getAllCourses() {
 		// TODO Auto-generated method stub
-		return courseRepository.findAll();
+		try {
+			return ResponseEntity.ok(courseRepository.findAll());
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.err.println("Error deleting course: " + e.getMessage());
+			
+			return ResponseEntity.status(500).body(null);
+		}
 	}
-	
-	
-
 }

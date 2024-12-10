@@ -17,4 +17,7 @@ public class Enrollment {
 	
 	private String studentId;
 	private String courseId;
+	
+	//private String enrollmentDate;
+	
 }

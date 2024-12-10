@@ -18,4 +18,13 @@ public class Course {
 	private String courseId;
 	private String title;
 	private String description;
+	
+//	@Id
+//	private String id;
+//	
+//	private String courseCode;
+//	private String courseName;
+//	private String description;
+//	private int credits;
+	
 }
