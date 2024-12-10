@@ -10,17 +10,23 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sra.studentapp.model.Student;
-import com.sra.studentapp.model.StudentDtoForLogin;
 import com.sra.studentapp.model.StudentDtoForUpdate;
+import com.sra.studentapp.model.User;
 import com.sra.studentapp.service.StudentService;
+import com.sra.studentapp.service.UserService;
 
-@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+import jakarta.servlet.http.HttpServletResponse;
+
+@CrossOrigin(origins =  "http://localhost:3000", allowCredentials = "true")
 @RestController
 public class StudentController {
 
 	@Autowired
 	private StudentService studentService;
 
+	@Autowired
+    private UserService userService;
+	
 	@PostMapping("/register")
 	public ResponseEntity<String> registerStudent(@RequestBody Student s) {
 		return studentService.registerStudent(s);
@@ -32,17 +38,18 @@ public class StudentController {
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<String> loginStudent(@RequestBody StudentDtoForLogin loginData) {
-		return studentService.loginStudent(loginData.getUserName(), loginData.getPassword());
+	public ResponseEntity<String> loginStudent(@RequestBody User loginData, HttpServletResponse response) {
+		return userService.verify(loginData, response);
 	}
 
 	@GetMapping("/userdetails/{id}")
 	public ResponseEntity<StudentDtoForUpdate> getUserDetails(@PathVariable String id) {
+		System.out.println(studentService.getStudent(id));
 		return studentService.getStudent(id);
 	}
 	
 	@GetMapping("/getusername/{id}")
-	public ResponseEntity<String> getUserName(@PathVariable String id) {
-		return studentService.getUserName(id);
+	public ResponseEntity<String> getFirstName(@PathVariable String id) {
+		return studentService.getFirstName(id);
 	}
 }

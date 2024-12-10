@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.sra.studentapp.model.Student;
 import com.sra.studentapp.model.StudentDtoForUpdate;
+import com.sra.studentapp.model.User;
 import com.sra.studentapp.repository.StudentRepository;
 
 @Service
@@ -19,15 +20,19 @@ public class StudentServiceImpl implements StudentService {
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	
+	@Autowired
+    private UserService userService;
 
 	@Override
 	public ResponseEntity<String> registerStudent(Student s) {
 		try {
-			if (studentRepository.existsByUserName(s.getUserName())) {
-				return ResponseEntity.status(409).body("Username already exists"); // conflict
+			if (studentRepository.existsByEmail(s.getEmail())) {
+				return ResponseEntity.status(409).body("Email already exists"); // conflict
 			}
 			s.setPassword(passwordEncoder.encode(s.getPassword()));
 			Student student = studentRepository.save(s);
+			userService.register(new User(s.getId(),s.getEmail(),s.getPassword()));
 			return ResponseEntity.status(201).body("Student successfully registered :" + student.getId()); // created
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -45,9 +50,13 @@ public class StudentServiceImpl implements StudentService {
 
 			if (studentOptional.isPresent()) {
 				Student student = studentOptional.get();
-				student.setName(s.getName());
+				student.setId(s.getId());
 				student.setEmail(s.getEmail());
-				student.setPhone(s.getPhone());
+				student.setFirstName(s.getFirstName());
+				student.setLastName(s.getLastName());
+				student.setDateOfBirth(s.getDateOfBirth());
+				student.setAddress(s.getAddress());
+				student.setPhoneNumber(s.getPhoneNumber());
 				studentRepository.save(student);
 				return ResponseEntity.ok("Update Successful"); // 200
 			} else {
@@ -62,28 +71,28 @@ public class StudentServiceImpl implements StudentService {
 		
 	}
 
-	@Override
-	public ResponseEntity<String> loginStudent(String userName, String password) {
-		// TODO Auto-generated method stub
-		try {
-			Optional<Student> student = studentRepository.findByUserName(userName);
-
-			if (student.isPresent()) {
-				boolean match = passwordEncoder.matches(password, student.get().getPassword());
-				if (match) {
-					return ResponseEntity.ok(String.valueOf(student.get().getId()));
-				} else {
-					return ResponseEntity.status(401).body("Invalid credentials"); // Unauthorized
-				}
-			}
-			return ResponseEntity.status(404).body("User not found"); // not found
-		} catch (Exception e) {
-			// TODO: handle exception
-			System.err.println("Error while logging in : " + e.getMessage());
-
-			return ResponseEntity.status(500).body("An error occurred during login"); // internal server error
-		}
-	}
+//	@Override
+//	public ResponseEntity<String> loginStudent(String userName, String password) {
+//		// TODO Auto-generated method stub
+//		try {
+//			Optional<Student> student = null;//studentRepository.findByUserName(userName);
+//
+//			if (student.isPresent()) {
+//				boolean match = passwordEncoder.matches(password, student.get().getPassword());
+//				if (match) {
+//					return ResponseEntity.ok(String.valueOf(student.get().getId()));
+//				} else {
+//					return ResponseEntity.status(401).body("Invalid credentials"); // Unauthorized
+//				}
+//			}
+//			return ResponseEntity.status(404).body("User not found"); // not found
+//		} catch (Exception e) {
+//			// TODO: handle exception
+//			System.err.println("Error while logging in : " + e.getMessage());
+//
+//			return ResponseEntity.status(500).body("An error occurred during login"); // internal server error
+//		}
+//	}
 
 	@Override
 	public ResponseEntity<StudentDtoForUpdate> getStudent(String id) {
@@ -94,11 +103,13 @@ public class StudentServiceImpl implements StudentService {
 				Student student = studentOptional.get();
 
 				StudentDtoForUpdate updatedDetails = new StudentDtoForUpdate();
-				updatedDetails.setUserName(student.getUserName());
-				updatedDetails.setEmail(student.getEmail());
-				updatedDetails.setName(student.getName());
 				updatedDetails.setId(student.getId());
-				updatedDetails.setPhone(student.getPhone());
+				updatedDetails.setEmail(student.getEmail());
+				updatedDetails.setFirstName(student.getFirstName());
+				updatedDetails.setLastName(student.getLastName());
+				updatedDetails.setDateOfBirth(student.getDateOfBirth());
+				updatedDetails.setAddress(student.getAddress());
+				updatedDetails.setPhoneNumber(student.getPhoneNumber());
 				return ResponseEntity.ok(updatedDetails);
 			} else {
 				return ResponseEntity.status(404).body(null);
@@ -111,12 +122,12 @@ public class StudentServiceImpl implements StudentService {
 	}
 
 	@Override
-	public ResponseEntity<String> getUserName(String id) {
+	public ResponseEntity<String> getFirstName(String id) {
 		// TODO Auto-generated method stub
 		try {
 			Optional<Student> studentOptional = studentRepository.findById(id);
 			if (studentOptional.isPresent()) {
-				return ResponseEntity.ok(studentOptional.get().getUserName());
+				return ResponseEntity.ok(studentOptional.get().getFirstName());
 			} else {
 				return ResponseEntity.status(404).body("Student not found");
 			}

@@ -17,25 +17,13 @@ public class Student {
 	private String id;
 	
 	@Indexed(unique = true)
-	private String userName;
+	private String email;
 	
 	private String password;
-	private String name;
-	private String phone;
-	private String email;
-//	
-//	@Id
-//	private String id;
-//	
-//	@Indexed(unique = true)
-//	private String email;
-//	
-//	private String firstName;
-//	private String lastName;
-//	private String password;
-//	private String dateOfBirth;
-//	private String address;
-//	private String phoneNumber;
 	
-	
+	private String firstName;
+	private String lastName;
+	private String dateOfBirth;
+	private String address;
+	private String phoneNumber;
 }
